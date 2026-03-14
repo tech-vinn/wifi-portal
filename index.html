@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Home WiFi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0C1015;
+      --surface: #131820;
+      --border: #1E2730;
+      --accent: #3B82F6;
+      --accent-glow: rgba(59,130,246,0.15);
+      --accent2: #06B6D4;
+      --text: #E8EDF2;
+      --muted: #6B7A8D;
+      --success: #10B981;
+      --error: #EF4444;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* Animated background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Radial glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(59,130,246,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(59,130,246,0.08),
+        0 32px 64px rgba(0,0,0,0.5),
+        0 0 80px rgba(59,130,246,0.06);
+      animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Header */
+    .card-header {
+      padding: 36px 36px 28px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .card-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(59,130,246,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .wifi-icon {
+      width: 52px; height: 52px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.2); }
+      50% { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+    }
+    .wifi-icon svg { width: 26px; height: 26px; }
+
+    .header-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .header-tag::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .header-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+    }
+    .header-title em {
+      font-style: italic;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sub {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    /* Form */
+    .card-body { padding: 28px 36px; }
+
+    .form-group {
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+    .form-group:nth-child(1) { animation-delay: 0.15s; }
+    .form-group:nth-child(2) { animation-delay: 0.25s; }
+    .form-group:nth-child(3) { animation-delay: 0.35s; }
+    .form-group:nth-child(4) { animation-delay: 0.45s; }
+    .form-group:nth-child(5) { animation-delay: 0.55s; }
+    .form-group:nth-child(6) { animation-delay: 0.65s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      appearance: none;
+    }
+    input::placeholder { color: #3A4455; }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    }
+    input.error { border-color: var(--error); }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A8D' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    select option { background: #131820; color: var(--text); }
+
+    /* Terms */
+    .terms-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.65;
+      max-height: 100px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .terms-box strong { color: var(--text); }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: 18px; height: 18px;
+      min-width: 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      appearance: none;
+      cursor: pointer;
+      margin-top: 1px;
+      transition: background 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .checkbox-row input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .checkbox-row input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 5px;
+      width: 5px; height: 9px;
+      border: 2px solid white;
+      border-top: none; border-left: none;
+      transform: rotate(45deg);
+    }
+    .checkbox-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .checkbox-label a { color: var(--accent); text-decoration: none; }
+
+    /* Error message */
+    .error-msg {
+      font-size: 0.72rem;
+      color: var(--error);
+      margin-top: 5px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* Submit button */
+    .btn-connect {
+      width: 100%;
+      margin-top: 22px;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-connect:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(59,130,246,0.45);
+    }
+    .btn-connect:active { transform: translateY(0); }
+    .btn-connect svg { width: 18px; height: 18px; }
+
+    /* Footer note */
+    .card-footer {
+      padding: 16px 36px 24px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .card-footer span { opacity: 0.5; }
+
+    /* Success screen */
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 36px;
+      text-align: center;
+    }
+    .success-screen.show { display: flex; }
+    .form-view.hide { display: none; }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-icon svg { width: 32px; height: 32px; color: var(--success); }
+    .success-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    .success-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 300px;
+    }
+    .success-badge {
+      margin-top: 28px;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      color: var(--success);
+      letter-spacing: 0.08em;
+    }
+    .success-dot {
+      width: 7px; height: 7px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- FORM VIEW -->
+    <div class="form-view" id="formView">
+
+      <div class="card-header">
+        <div class="wifi-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <circle cx="12" cy="20" r="1" fill="#3B82F6"/>
+          </svg>
+        </div>
+        <p class="header-tag">Network Access Required</p>
+        <h1 class="header-title">Welcome to my<br><em>Home WiFi</em></h1>
+        <p class="header-sub">Please fill in your details below to get connected. Your information is kept private.</p>
+      </div>
+
+      <div class="card-body">
+
+        <div class="form-group">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" placeholder="e.g. John Mwangi" autocomplete="name" />
+          <p class="error-msg" id="err-name">Please enter your full name</p>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+          <p class="error-msg" id="err-email">Please enter a valid email address</p>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="+255 7XX XXX XXX" autocomplete="tel" />
+          <p class="error-msg" id="err-phone">Please enter your phone number</p>
+        </div>
+
+        <div class="form-group">
+          <label for="reason">Reason for Visiting</label>
+          <select id="reason">
+            <option value="" disabled selected>Select a reason…</option>
+            <option value="guest">Guest / Visitor</option>
+            <option value="family">Family Member</option>
+            <option value="work">Work / Remote Work</option>
+            <option value="event">Attending an Event</option>
+            <option value="other">Other</option>
+          </select>
+          <p class="error-msg" id="err-reason">Please select a reason</p>
+        </div>
+
+        <div class="form-group">
+          <label>Terms & Conditions</label>
+          <div class="terms-box">
+            By connecting to this network, you agree to the following:
+            <br><br>
+            <strong>1. Acceptable Use</strong> — You will not use this network for any illegal activities, including but not limited to hacking, downloading illegal content, or harassment.
+            <br><br>
+            <strong>2. Privacy</strong> — Your name, email, and phone number will be stored securely and not shared with third parties.
+            <br><br>
+            <strong>3. Bandwidth</strong> — Please use the network responsibly. Excessive streaming or downloads may result in disconnection.
+            <br><br>
+            <strong>4. Security</strong> — The network owner is not responsible for any loss or damage to your device while connected.
+          </div>
+          <label class="checkbox-row">
+            <input type="checkbox" id="terms" />
+            <span class="checkbox-label">I have read and agree to the <a href="#">Terms & Conditions</a></span>
+          </label>
+          <p class="error-msg" id="err-terms">You must agree to the terms to continue</p>
+        </div>
+
+        <button class="btn-connect" id="connectBtn" onclick="handleConnect()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <circle cx="12" cy="20" r="1" fill="white"/>
+          </svg>
+          Connect to WiFi
+        </button>
+
+      </div>
+
+      <div class="card-footer">
+        <span>🔒 Your data is encrypted and stored securely</span>
+      </div>
+
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2 class="success-title">You're Connected!</h2>
+      <p class="success-sub">Welcome aboard. You now have access to the home network. Enjoy your browsing!</p>
+      <div class="success-badge">
+        <div class="success-dot"></div>
+        Network Access Granted
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function handleConnect() {
+      let valid = true;
+
+      // Clear previous errors
+      document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('input, select').forEach(e => e.classList.remove('error'));
+
+      const name = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const reason = document.getElementById('reason').value;
+      const terms = document.getElementById('terms').checked;
+
+      if (!name || name.split(' ').length < 2) {
+        document.getElementById('err-name').classList.add('show');
+        document.getElementById('fullname').classList.add('error');
+        valid = false;
+      }
+
+      const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailReg.test(email)) {
+        document.getElementById('err-email').classList.add('show');
+        document.getElementById('email').classList.add('error');
+        valid = false;
+      }
+
+      if (!phone || phone.replace(/\D/g,'').length < 7) {
+        document.getElementById('err-phone').classList.add('show');
+        document.getElementById('phone').classList.add('error');
+        valid = false;
+      }
+
+      if (!reason) {
+        document.getElementById('err-reason').classList.add('show');
+        document.getElementById('reason').classList.add('error');
+        valid = false;
+      }
+
+      if (!terms) {
+        document.getElementById('err-terms').classList.add('show');
+        valid = false;
+      }
+
+      if (valid) {
+        const btn = document.getElementById('connectBtn');
+        btn.textContent = 'Connecting…';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          document.getElementById('formView').classList.add('hide');
+          document.getElementById('successScreen').classList.add('show');
+        }, 1200);
+      }
+    }
+  </script>
+
+</body>
+</html>
