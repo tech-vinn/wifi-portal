@@ -530,10 +530,33 @@
         btn.style.opacity = '0.7';
         btn.disabled = true;
 
-        setTimeout(() => {
-          document.getElementById('formView').classList.add('hide');
-          document.getElementById('successScreen').classList.add('show');
-        }, 1200);
+        // Send to Formspree
+        fetch('https://formspree.io/f/mbdzkwkn', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            'Full Name': name,
+            'Email': email,
+            'Phone': phone,
+            'Reason for Visiting': reason,
+            'Terms Agreed': 'Yes'
+          })
+        })
+        .then(res => {
+          if (res.ok) {
+            document.getElementById('formView').classList.add('hide');
+            document.getElementById('successScreen').classList.add('show');
+          } else {
+            btn.textContent = 'Submission Failed — Try Again';
+            btn.style.opacity = '1';
+            btn.disabled = false;
+          }
+        })
+        .catch(() => {
+          btn.textContent = 'Network Error — Try Again';
+          btn.style.opacity = '1';
+          btn.disabled = false;
+        });
       }
     }
   </script>
